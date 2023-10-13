@@ -320,8 +320,8 @@ public class Epc {
                 return "";
             }
             String scor = value.replace(" ", "");
-            if (!validSCOR(scor)) {
-                throw new EpcException("SCOR has invalid format");
+            if (!validateSCOR(scor)) {
+                throw new EpcException("SCOR has invalid format or checksum");
             }
             return scor;
         }

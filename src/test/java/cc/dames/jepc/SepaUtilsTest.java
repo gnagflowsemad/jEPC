@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static cc.dames.jepc.SepaUtils.*;
+import static cc.dames.jepc.SepaUtils.validateSCOR;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SepaUtilsTest {
@@ -31,17 +32,6 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void validSCORTest() {
-        assertTrue(validSCOR("RF18 5390 0754 7034"));
-        assertTrue(validSCOR(""));
-        assertTrue(validSCOR(null));
-        assertTrue(validSCOR("RF18000000000539007547034"));
-        assertFalse(validSCOR("rf18000000000539007547034"));
-        assertFalse(validSCOR("RV18000000000539007547034"));
-        assertFalse(validSCOR("RF180000000005390075470345"));
-    }
-
-    @Test
     public void strEmptyTest() {
         assertTrue(strEmpty(""));
         assertFalse(strEmpty("A"));
@@ -53,5 +43,35 @@ class SepaUtilsTest {
         assertTrue(strNotEmpty(" "));
         assertTrue(strNotEmpty("A"));
         assertFalse(strNotEmpty(""));
+    }
+
+    @Test
+    public void validateSCORTest() {
+        assertFalse(validateSCOR(""));
+        assertFalse(validateSCOR(null));
+        assertFalse(validateSCOR("RF214377"));
+        assertFalse(validateSCOR("Rv45G72UUR"));
+        assertFalse(validateSCOR("rv45G72UUR"));
+        assertTrue(validateSCOR("RF45G72UUR"));
+        assertTrue(validateSCOR("RF6518K5"));
+        assertFalse(validateSCOR("RF35C4"));
+        assertTrue(validateSCOR("RF18 5390 0754 7034"));
+        assertTrue(validateSCOR("RF18000000000539007547034"));
+        assertTrue(validateSCOR("RF48XNO3G76VUE05CW1CC0FWK"));
+        assertTrue(validateSCOR("RF9157QT3D9OD"));
+        assertTrue(validateSCOR("RF29Z"));
+        assertTrue(validateSCOR("RF89M"));
+        assertTrue(validateSCOR("RF13HO6YZPQJ27"));
+        assertTrue(validateSCOR("RF29B99"));
+        assertTrue(validateSCOR("RF42U0SR08RDVSXQEAUQCQJ0R"));
+        assertTrue(validateSCOR("RF2290897867TREKKERTJE"));
+        assertTrue(validateSCOR("RF35WOLFGANG"));
+        assertTrue(validateSCOR("RF4714508655422864"));
+        assertTrue(validateSCOR("RF794723M108"));
+    }
+
+    @Test
+    public void createSCORTest() {
+        assertEquals("RF794723M108", createSCOR("4723M108"));
     }
 }
