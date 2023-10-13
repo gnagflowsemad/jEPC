@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import static cc.dames.jepc.SepaUtils.*;
 import static cc.dames.jepc.SepaUtils.validateSCOR;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class SepaUtilsTest {
 
@@ -18,6 +19,26 @@ class SepaUtilsTest {
         assertFalse(SEPA_TEXT_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
         assertTrue(SEPA_TEXT_UMLAUTS_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
         assertTrue(SEPA_TEXT_UMLAUTS_PATTERN.matcher("A&B Events").matches());
+    }
+
+    @Test
+    public void ibanPatternTest() {
+        assertFalse(IBAN_PATTERN.matcher("").matches());
+        assertTrue(IBAN_PATTERN.matcher("DE19200411330823122700").matches());
+        assertTrue(IBAN_PATTERN.matcher("DE89500105179394767432").matches());
+        assertTrue(IBAN_PATTERN.matcher("DE44500105173481939824").matches());
+        assertTrue(IBAN_PATTERN.matcher("NL79RABO2423554788").matches());
+        assertTrue(IBAN_PATTERN.matcher("CH8589144649296413173").matches());
+        assertTrue(IBAN_PATTERN.matcher("AT835400037618454391").matches());
+    }
+
+    @Test
+    public void bicPatternTest() {
+        assertFalse(BIC_REGEX_PATTERN.matcher("").matches());
+        assertTrue(BIC_REGEX_PATTERN.matcher("COBADEHD001").matches());
+        assertTrue(BIC_REGEX_PATTERN.matcher("COBADEFF060").matches());
+        assertTrue(BIC_REGEX_PATTERN.matcher("GEBABEBB").matches());
+        assertTrue(BIC_REGEX_PATTERN.matcher("ZUNOCZPP").matches());
     }
 
     @Test
@@ -81,7 +102,6 @@ class SepaUtilsTest {
         assertFalse(validateIBAN(null));
         assertFalse(validateIBAN("DE19200411330823122700"));
         assertTrue(validateIBAN("DE18200411330823122700"));
-        assertTrue(validateIBAN("DE89500105179394767432"));
         assertTrue(validateIBAN("DE89500105179394767432"));
         assertTrue(validateIBAN("DE44500105173481939824"));
         assertTrue(validateIBAN("NL79RABO2423554788"));
