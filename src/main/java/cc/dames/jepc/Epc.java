@@ -13,32 +13,35 @@ import static cc.dames.jepc.SepaUtils.*;
  * @author gnagflowsemad
  * @version 1.0
  */
-public class Epc {
+public final class Epc {
+
+    private Epc() {
+    }
 
     public static class Builder {
 
         private LineFeed lf = LineFeed.LF;
 
         // row 1
-        private final String BCD = "BCD";
+        private static final String BCD = "BCD";
 
         // row 2
-        private Version version = Version._002;
+        private Version version = Version.V002;
 
         // row 3
         private int characterEncoding = 1; // UTF-8
 
         // row 4
-        private final String SCT = "SCT"; // SEPA Credit Transfer
+        private static final String SCT = "SCT"; // SEPA Credit Transfer
 
         // row 5
-        private String BIC; // empty value is allowed if version is 002
+        private String bic; // empty value is allowed if version is 002
 
         // row 6
         private String issuer; // Beneficiary, 70 characters max, "Kontoinhaber", "Rechnungssteller"
 
         // row 7
-        private String IBAN;
+        private String iban;
 
         // row 8
         private BigDecimal transferAmount = null;
@@ -47,7 +50,7 @@ public class Epc {
         private SepaPurpose sepaPurpose; // optional
 
         // row 10
-        private String SCOR; // Structured Creditor Reference, ISO 11649, max. 25 characters
+        private String scor; // Structured Creditor Reference, ISO 11649, max. 25 characters
 
         // row 11
         private String intendedUse; // "Verwendungszweck"
@@ -116,7 +119,7 @@ public class Epc {
          * @return Epc object
          */
         public Builder withBIC(String value) {
-            this.BIC = value.trim();
+            this.bic = value.trim();
             return this;
         }
 
@@ -136,7 +139,7 @@ public class Epc {
          * @return Epc object
          */
         public Builder withIBAN(String value) {
-            this.IBAN = value == null ? "" : value.replace(" ", "").trim();
+            this.iban = value == null ? "" : value.replace(" ", "").trim();
             return this;
         }
 
@@ -192,7 +195,7 @@ public class Epc {
          * @return Epc object
          */
         public Builder withScor(String value) {
-            this.SCOR = value.trim();
+            this.scor = value.trim();
             return this;
         }
 
@@ -210,11 +213,11 @@ public class Epc {
 
             final String CURRENCY = "EUR";
 
-            if (Version._001 == version && strEmpty(BIC)) {
-                throw new EpcException("BIC can not be empty if version is " + Version._001.getCode());
+            if (Version.V001 == version && strEmpty(bic)) {
+                throw new EpcException("BIC can not be empty if version is " + Version.V001.getCode());
             }
 
-            if (strEmpty(IBAN)) {
+            if (strEmpty(iban)) {
                 throw new EpcException("IBAN can not be empty");
             }
 
@@ -222,7 +225,7 @@ public class Epc {
                 throw new EpcException("transfer amount can not be empty");
             }
 
-            if (strNotEmpty(SCOR) && strNotEmpty(intendedUse)) {
+            if (strNotEmpty(scor) && strNotEmpty(intendedUse)) {
                 throw new EpcException("either SCOR or intended use can be set");
             }
 
@@ -236,18 +239,18 @@ public class Epc {
             sb.append(lineFeedCode);
             sb.append(SCT);
             sb.append(lineFeedCode);
-            sb.append(checkBIC(BIC));
+            sb.append(checkBIC(bic));
             sb.append(lineFeedCode);
             sb.append(checkIssuer(issuer));
             sb.append(lineFeedCode);
-            sb.append(checkIBAN(IBAN));
+            sb.append(checkIBAN(iban));
             sb.append(lineFeedCode);
             sb.append(CURRENCY);
             sb.append(checkTransferAmount(transferAmount));
             sb.append(lineFeedCode);
             sb.append(checkSepaPurpose(sepaPurpose));
             sb.append(lineFeedCode);
-            sb.append(checkSCOR(SCOR));
+            sb.append(checkSCOR(scor));
             sb.append(lineFeedCode);
             sb.append(checkIntendedUse(intendedUse));
             sb.append(lineFeedCode);
@@ -297,11 +300,11 @@ public class Epc {
             if (value.length() > 34) {
                 throw new EpcException("IBAN exceed allowed length, max. 34");
             }
-            Matcher matcher = IBAN_PATTERN.matcher(IBAN);
+            Matcher matcher = IBAN_PATTERN.matcher(iban);
             if (!matcher.matches()) {
                 throw new EpcException("IBAN has invalid format");
             }
-            return IBAN;
+            return iban;
         }
 
         private BigDecimal checkTransferAmount(BigDecimal value) {
@@ -319,11 +322,11 @@ public class Epc {
             if (strEmpty(value)) {
                 return "";
             }
-            String scor = value.replace(" ", "");
-            if (!validateSCOR(scor)) {
+            String sanitized = value.replace(" ", "");
+            if (!validateSCOR(sanitized)) {
                 throw new EpcException("SCOR has invalid format or checksum");
             }
-            return scor;
+            return sanitized;
         }
 
         private String checkIntendedUse(String value) {

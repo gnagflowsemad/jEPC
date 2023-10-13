@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class SepaUtilsTest {
 
     @Test
-    public void sepaTextPatternTest() {
+    void sepaTextPatternTest() {
         assertTrue(SEPA_TEXT_PATTERN.matcher("Wikimedia Foerdergesellschaft").matches());
         assertTrue(SEPA_TEXT_PATTERN.matcher("Bitte innerhalb der naechsten 14 Tage ueberweisen").matches());
         assertTrue(SEPA_TEXT_PATTERN.matcher("A&B Events").matches());
@@ -22,7 +22,7 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void ibanPatternTest() {
+    void ibanPatternTest() {
         assertFalse(IBAN_PATTERN.matcher("").matches());
         assertTrue(IBAN_PATTERN.matcher("DE19200411330823122700").matches());
         assertTrue(IBAN_PATTERN.matcher("DE89500105179394767432").matches());
@@ -33,7 +33,7 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void bicPatternTest() {
+    void bicPatternTest() {
         assertFalse(BIC_REGEX_PATTERN.matcher("").matches());
         assertTrue(BIC_REGEX_PATTERN.matcher("COBADEHD001").matches());
         assertTrue(BIC_REGEX_PATTERN.matcher("COBADEFF060").matches());
@@ -42,7 +42,7 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void maxAmountTest() {
+    void maxAmountTest() {
         assertFalse(exceedAmount(new BigDecimal("0.01")));
         assertFalse(exceedAmount(new BigDecimal("999999999.99")));
         assertTrue(exceedAmount(new BigDecimal("-0.01")));
@@ -53,21 +53,21 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void strEmptyTest() {
+    void strEmptyTest() {
         assertTrue(strEmpty(""));
         assertFalse(strEmpty("A"));
         assertTrue(strEmpty(null));
     }
 
     @Test
-    public void strNotEmptyTest() {
+    void strNotEmptyTest() {
         assertTrue(strNotEmpty(" "));
         assertTrue(strNotEmpty("A"));
         assertFalse(strNotEmpty(""));
     }
 
     @Test
-    public void validateSCORTest() {
+    void validateSCORTest() {
         assertFalse(validateSCOR(""));
         assertFalse(validateSCOR(null));
         assertFalse(validateSCOR("RF214377"));
@@ -92,12 +92,12 @@ class SepaUtilsTest {
     }
 
     @Test
-    public void createSCORTest() {
+    void createSCORTest() {
         assertEquals("RF794723M108", createSCOR("4723M108"));
     }
 
     @Test
-    public void validateIBANTest() {
+    void validateIBANTest() {
         assertFalse(validateIBAN(""));
         assertFalse(validateIBAN(null));
         assertFalse(validateIBAN("DE19200411330823122700"));

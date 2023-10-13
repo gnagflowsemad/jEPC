@@ -1,8 +1,8 @@
 package cc.dames.jepc;
 
 public enum Version {
-    _001("001"),
-    _002("002");
+    V001("001"),
+    V002("002");
 
     private final String code;
 

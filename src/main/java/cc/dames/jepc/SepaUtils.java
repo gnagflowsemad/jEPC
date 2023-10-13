@@ -19,17 +19,17 @@ public final class SepaUtils {
 
     public static final Pattern IBAN_PATTERN = Pattern.compile(IBAN_REGEX, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    private final static String SEPA_TEXT = "[a-zA-Z0-9/\\-?:().,+'& ]+";
+    private static final String SEPA_TEXT = "[a-zA-Z0-9/\\-?:().,+'& ]+";
 
     public static final Pattern SEPA_TEXT_PATTERN = Pattern.compile(SEPA_TEXT);
 
     private static final String SEPA_TEXT_UMLAUTS = "[a-zA-Z0-9/\\-?:().,+&' öäüÄÖÜß]+";
 
-    public static final Pattern SEPA_TEXT_UMLAUTS_PATTERN = Pattern.compile(SEPA_TEXT_UMLAUTS, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    public static final Pattern SEPA_TEXT_UMLAUTS_PATTERN = Pattern.compile(SEPA_TEXT_UMLAUTS, Pattern.UNICODE_CASE | Pattern.MULTILINE);
 
     private static final String BIC_REGEX = "([a-zA-Z]{4})([a-zA-Z]{2})(([2-9a-zA-Z])([0-9a-np-zA-NP-Z]))((([0-9a-wy-zA-WY-Z])([0-9a-zA-Z]{2}))|([xX]{3})|)";
 
-    public static final Pattern BIC_REGEX_PATTERN = Pattern.compile(BIC_REGEX, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    public static final Pattern BIC_REGEX_PATTERN = Pattern.compile(BIC_REGEX, Pattern.UNICODE_CASE | Pattern.MULTILINE);
 
     private static final String SCOR_PREFIX = "RF";
 
@@ -77,7 +77,7 @@ public final class SepaUtils {
         if (scor.length() > 25) {
             return false;
         }
-        if (!scor.matches("RF[0-9]{2}[0-9A-Z]+")) {
+        if (!scor.matches("RF\\d{2}[0-9A-Z]+")) {
             return false;
         }
 
@@ -85,7 +85,7 @@ public final class SepaUtils {
         String reference = scor.replace(prefix, "");
 
         BigInteger bi = new BigInteger(substituteCharWithNumber(reference + prefix));
-        return bi.mod(new BigInteger("97")).equals(BigInteger.ONE);
+        return bi.mod(BigInteger.valueOf(97L)).equals(BigInteger.ONE);
     }
 
     public static boolean validateIBAN(String iban) {
@@ -100,7 +100,7 @@ public final class SepaUtils {
         String prefix = iban.substring(0, 4);
         String reference = iban.replace(prefix, "");
         BigInteger bi = new BigInteger(substituteCharWithNumber(reference + prefix));
-        return bi.mod(new BigInteger("97")).equals(BigInteger.ONE);
+        return bi.mod(BigInteger.valueOf(97L)).equals(BigInteger.ONE);
     }
 
     private static int calculateCheckSum(String reference) {
@@ -108,9 +108,9 @@ public final class SepaUtils {
             return 0;
         }
         return
-                new BigInteger("98")
+                BigInteger.valueOf(98L)
                 .subtract(new BigInteger(substituteCharWithNumber(reference + SCOR_PREFIX + "00"))
-                .mod(new BigInteger("97")))
+                .mod(BigInteger.valueOf(97L)))
                 .intValue();
     }
 
@@ -122,7 +122,7 @@ public final class SepaUtils {
         StringBuilder decoded = new StringBuilder();
         while (it.current() != CharacterIterator.DONE) {
             if (isLetter(it.current())) {
-                decoded.append(CharDigitTranslation.valueOf(String.valueOf(it.current()).toLowerCase()).getDigit());
+                decoded.append(CharDigitTranslation.valueOf(String.valueOf(it.current()).toUpperCase()).getDigit());
             } else {
                 decoded.append(it.current());
             }

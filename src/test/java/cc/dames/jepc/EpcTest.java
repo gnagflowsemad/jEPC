@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EpcTest {
 
     @Test
-    public void testMinimalEpc() {
+    void testMinimalEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -38,7 +38,7 @@ class EpcTest {
     }
 
     @Test
-    public void testStringAmountEpc() {
+    void testStringAmountEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -67,7 +67,7 @@ class EpcTest {
     }
 
     @Test
-    public void testNegativeAmountEpc() {
+    void testNegativeAmountEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -80,7 +80,7 @@ class EpcTest {
     }
 
     @Test
-    public void testAmountExceedEpc() {
+    void testAmountExceedEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -93,7 +93,7 @@ class EpcTest {
     }
 
     @Test
-    public void testCharacterEncodingEpc() {
+    void testCharacterEncodingEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -123,7 +123,7 @@ class EpcTest {
     }
 
     @Test
-    public void testWrongCharacterEncodingEpc() {
+    void testWrongCharacterEncodingEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -137,7 +137,7 @@ class EpcTest {
     }
 
     @Test
-    public void testSimpleEpc() {
+    void testSimpleEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -167,7 +167,7 @@ class EpcTest {
     }
 
     @Test
-    public void testSepaPurposeEpc() {
+    void testSepaPurposeEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -198,7 +198,7 @@ class EpcTest {
     }
 
     @Test
-    public void testCRLFEpc() {
+    void testCRLFEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -214,7 +214,7 @@ class EpcTest {
     }
 
     @Test
-    public void testUmlautsPositiveEpc() {
+    void testUmlautsPositiveEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Fördergesellschaft")
@@ -245,7 +245,7 @@ class EpcTest {
     }
 
     @Test
-    public void testUmlautsNegativeEpc() {
+    void testUmlautsNegativeEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -259,7 +259,7 @@ class EpcTest {
     }
 
     @Test
-    public void testSCOREpc() {
+    void testSCOREpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -274,7 +274,7 @@ class EpcTest {
     }
 
     @Test
-    public void testInvalidSCOREpc() {
+    void testInvalidSCOREpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
@@ -288,10 +288,10 @@ class EpcTest {
     }
 
     @Test
-    public void testVersionWithoutBICEpc() {
+    void testVersionWithoutBICEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
-                .withVersion(Version._001)
+                .withVersion(Version.V001)
                 .withIssuer("Wikimedia Foerdergesellschaft")
                 .withIBAN("DE33100205000001194700")
                 .withTransferAmount(new BigDecimal("123.45"))
@@ -302,10 +302,10 @@ class EpcTest {
     }
 
     @Test
-    public void testVersionWithBICEpc() {
+    void testVersionWithBICEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
-                .withVersion(Version._001)
+                .withVersion(Version.V001)
                 .withIssuer("Wikimedia Foerdergesellschaft")
                 .withBIC("BFSWDE33BER")
                 .withIBAN("DE33100205000001194700")
