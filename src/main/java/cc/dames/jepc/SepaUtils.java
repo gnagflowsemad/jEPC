@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class SepaUtils {
@@ -70,11 +71,11 @@ public final class SepaUtils {
         if (!scor.startsWith(SCOR_PREFIX)) {
             return false;
         }
+
+        scor = scor.replace(" ", "");
         if (scor.length() > 25) {
             return false;
         }
-        scor = scor.replace(" ", "");
-
         if (!scor.matches("RF[0-9]{2}[0-9A-Z]+")) {
             return false;
         }
@@ -82,6 +83,21 @@ public final class SepaUtils {
         String prefix = scor.substring(0, 4);
         String reference = scor.replace(prefix, "");
 
+        BigInteger bi = new BigInteger(substituteCharWithNumber(reference + prefix));
+        return bi.mod(new BigInteger("97")).equals(BigInteger.ONE);
+    }
+
+    public static boolean validateIBAN(String iban) {
+        if (strEmpty(iban)) {
+            return false;
+        }
+        iban = iban.replace(" ", "");
+        Matcher matcher = IBAN_PATTERN.matcher(iban);
+        if (!matcher.matches()) {
+            return false;
+        }
+        String prefix = iban.substring(0, 4);
+        String reference = iban.replace(prefix, "");
         BigInteger bi = new BigInteger(substituteCharWithNumber(reference + prefix));
         return bi.mod(new BigInteger("97")).equals(BigInteger.ONE);
     }

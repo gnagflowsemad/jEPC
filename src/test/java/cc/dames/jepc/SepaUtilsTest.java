@@ -74,4 +74,18 @@ class SepaUtilsTest {
     public void createSCORTest() {
         assertEquals("RF794723M108", createSCOR("4723M108"));
     }
+
+    @Test
+    public void validateIBANTest() {
+        assertFalse(validateIBAN(""));
+        assertFalse(validateIBAN(null));
+        assertFalse(validateIBAN("DE19200411330823122700"));
+        assertTrue(validateIBAN("DE18200411330823122700"));
+        assertTrue(validateIBAN("DE89500105179394767432"));
+        assertTrue(validateIBAN("DE89500105179394767432"));
+        assertTrue(validateIBAN("DE44500105173481939824"));
+        assertTrue(validateIBAN("NL79RABO2423554788"));
+        assertTrue(validateIBAN("CH8589144649296413173"));
+        assertTrue(validateIBAN("AT835400037618454391"));
+    }
 }
