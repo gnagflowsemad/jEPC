@@ -13,17 +13,19 @@ public final class SepaUtils {
     private SepaUtils() {
     }
 
+    private static final BigDecimal MIN_AMOUNT = new BigDecimal("0.01");
+
     private static final BigDecimal MAX_AMOUNT = new BigDecimal("999999999.99");
 
     private static final String IBAN_REGEX = "^(?:((?:IT|SM)\\d{2}[A-Z]\\d{22})|(NL\\d{2}[A-Z]{4}\\d{10})|(LV\\d{2}[A-Z]{4}\\d{13})|((?:BG|GB|IE)\\d{2}[A-Z]{4}\\d{14})|(GI\\d{2}[A-Z]{4}\\d{15})|(RO\\d{2}[A-Z]{4}\\d{16})|(MT\\d{2}[A-Z]{4}\\d{23})|(NO\\d{13})|((?:DK|FI|FO)\\d{16})|((?:SI)\\d{17})|((?:AT|EE|LU|LT)\\d{18})|((?:HR|LI|CH)\\d{19})|((?:DE)\\d{20})|((?:CZ|ES|SK|SE)\\d{22})|(PT\\d{23})|((?:IS)\\d{24})|((?:BE)\\d{14})|((?:FR|MC|GR)\\d{25})|((?:PL|HU|CY)\\d{26}))$";
 
     public static final Pattern IBAN_PATTERN = Pattern.compile(IBAN_REGEX, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    private static final String SEPA_TEXT = "[a-zA-Z0-9/\\-?:().,+'& ]+";
+    private static final String SEPA_TEXT = "[a-zA-Z0-9/\\-?:().,+' ]+";
 
     public static final Pattern SEPA_TEXT_PATTERN = Pattern.compile(SEPA_TEXT);
 
-    private static final String SEPA_TEXT_UMLAUTS = "[a-zA-Z0-9/\\-?:().,+&' öäüÄÖÜß]+";
+    private static final String SEPA_TEXT_UMLAUTS = "[a-zA-Z0-9/\\-?:().,+' öäüÄÖÜß]+";
 
     public static final Pattern SEPA_TEXT_UMLAUTS_PATTERN = Pattern.compile(SEPA_TEXT_UMLAUTS, Pattern.UNICODE_CASE | Pattern.MULTILINE);
 
@@ -42,10 +44,10 @@ public final class SepaUtils {
     }
 
     public static boolean exceedAmount(BigDecimal amount) {
-        if (amount == null || BigDecimal.ZERO.equals(amount)) {
+        if (amount == null) {
             return true;
         }
-        return amount.compareTo(MAX_AMOUNT) > 0 || amount.signum() == -1;
+        return amount.compareTo(MIN_AMOUNT) < 0 || amount.compareTo(MAX_AMOUNT) > 0;
     }
 
     public static BigDecimal bankersRounding(BigDecimal value) {

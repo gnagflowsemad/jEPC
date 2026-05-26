@@ -288,6 +288,32 @@ class EpcTest {
     }
 
     @Test
+    void testMissingIssuerEpc() {
+        Epc.Builder epc = new Epc.Builder();
+        epc
+                .withIBAN("DE33100205000001194700")
+                .withTransferAmount(new BigDecimal("123.45"));
+
+        EpcException thrown = assertThrows(EpcException.class, epc::build);
+        assertTrue(thrown.getMessage().contains("issuer can not be empty"));
+    }
+
+    @Test
+    void testPayloadTooLargeEpc() {
+        // issuer(70) + IBAN(22) + amount(9) + intendedUse(140) + message(70) + overhead = 332 bytes
+        Epc.Builder epc = new Epc.Builder();
+        epc
+                .withIssuer("A".repeat(70))
+                .withIBAN("DE33100205000001194700")
+                .withTransferAmount(new BigDecimal("123.45"))
+                .withIntendedUse("A".repeat(140))
+                .withMessage("B".repeat(70));
+
+        EpcException thrown = assertThrows(EpcException.class, epc::build);
+        assertTrue(thrown.getMessage().contains("payload exceeds maximum allowed size of 331 bytes"));
+    }
+
+    @Test
     void testVersionWithoutBICEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc

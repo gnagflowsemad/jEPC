@@ -15,10 +15,10 @@ class SepaUtilsTest {
     void sepaTextPatternTest() {
         assertTrue(SEPA_TEXT_PATTERN.matcher("Wikimedia Foerdergesellschaft").matches());
         assertTrue(SEPA_TEXT_PATTERN.matcher("Bitte innerhalb der naechsten 14 Tage ueberweisen").matches());
-        assertTrue(SEPA_TEXT_PATTERN.matcher("A&B Events").matches());
+        assertFalse(SEPA_TEXT_PATTERN.matcher("C&D Musterwerk IT-Beratung GmbH").matches());
         assertFalse(SEPA_TEXT_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
         assertTrue(SEPA_TEXT_UMLAUTS_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
-        assertTrue(SEPA_TEXT_UMLAUTS_PATTERN.matcher("A&B Events").matches());
+        assertFalse(SEPA_TEXT_UMLAUTS_PATTERN.matcher("C&D Musterwerk IT-Beratung GmbH").matches());
     }
 
     @Test
@@ -47,6 +47,8 @@ class SepaUtilsTest {
         assertFalse(exceedAmount(new BigDecimal("999999999.99")));
         assertTrue(exceedAmount(new BigDecimal("-0.01")));
         assertTrue(exceedAmount(new BigDecimal("0")));
+        assertTrue(exceedAmount(new BigDecimal("0.00")));
+        assertTrue(exceedAmount(new BigDecimal("0.009")));
         assertTrue(exceedAmount(BigDecimal.ZERO));
         assertTrue(exceedAmount(null));
         assertTrue(exceedAmount(new BigDecimal("1000000000")));

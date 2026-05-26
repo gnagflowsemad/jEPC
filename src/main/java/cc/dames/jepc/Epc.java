@@ -1,6 +1,8 @@
 package cc.dames.jepc;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 
 import static cc.dames.jepc.SepaUtils.*;
@@ -217,6 +219,10 @@ public final class Epc {
                 throw new EpcException("BIC can not be empty if version is " + Version.V001.getCode());
             }
 
+            if (strEmpty(issuer)) {
+                throw new EpcException("issuer can not be empty");
+            }
+
             if (strEmpty(iban)) {
                 throw new EpcException("IBAN can not be empty");
             }
@@ -256,7 +262,24 @@ public final class Epc {
             sb.append(lineFeedCode);
             sb.append(checkMessage(message));
 
-            return sb.toString();
+            String result = sb.toString();
+            if (result.getBytes(charsetForEncoding(characterEncoding)).length > 331) {
+                throw new EpcException("payload exceeds maximum allowed size of 331 bytes");
+            }
+            return result;
+        }
+
+        private Charset charsetForEncoding(int encoding) {
+            return switch (encoding) {
+                case 2 -> StandardCharsets.ISO_8859_1;
+                case 3 -> Charset.forName("ISO-8859-2");
+                case 4 -> Charset.forName("ISO-8859-4");
+                case 5 -> Charset.forName("ISO-8859-5");
+                case 6 -> Charset.forName("ISO-8859-7");
+                case 7 -> Charset.forName("ISO-8859-10");
+                case 8 -> Charset.forName("ISO-8859-15");
+                default -> StandardCharsets.UTF_8;
+            };
         }
 
         private int checkCharacterEncoding(int characterEncoding) {
