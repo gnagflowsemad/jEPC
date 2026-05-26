@@ -300,11 +300,11 @@ public final class Epc {
             if (value.length() > 34) {
                 throw new EpcException("IBAN exceed allowed length, max. 34");
             }
-            Matcher matcher = IBAN_PATTERN.matcher(iban);
+            Matcher matcher = IBAN_PATTERN.matcher(value);
             if (!matcher.matches()) {
                 throw new EpcException("IBAN has invalid format");
             }
-            return iban;
+            return value;
         }
 
         private BigDecimal checkTransferAmount(BigDecimal value) {
