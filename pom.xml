@@ -8,6 +8,24 @@
     <artifactId>jEPC</artifactId>
     <version>0.0.7</version>
 
+    <name>jEPC</name>
+    <description>jEPC is a Java library for generating 12 lines of text as described the content of a QR code that can be used to initiate SEPA credit transfer (SCT). It contains all the necessary information in clear text.</description>
+    <url>https://github.com/gnagflowsemad/jEPC</url>
+    <developers>
+        <developer>
+            <id>gnagflowsemad</id>
+            <name>Wolfgang Dames</name>
+            <email>wolfgang@dames.cc</email>
+            <url>https://github.com/gnagflowsemad</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/gnagflowsemad/jEPC.git</connection>
+        <developerConnection>scm:git:git@github.com:gnagflowsemad/jEPC.git</developerConnection>
+        <url>https://github.com/gnagflowsemad/jEPC</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
