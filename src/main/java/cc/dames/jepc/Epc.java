@@ -60,8 +60,6 @@ public final class Epc {
         // row 12
         private String message; // max. 70 characters
 
-        private boolean umlauts = false;
-
         /**
          * @param value line feed to use for whole document
          * @return Epc object
@@ -103,16 +101,6 @@ public final class Epc {
         }
 
         /**
-         * allow german umlauts, does not have an effect how credit institute treatment
-         * @param value true if umlauts are allowed
-         * @return Epc object
-         */
-        public Builder withUmlauts(boolean value) {
-            this.umlauts = value;
-            return this;
-        }
-
-        /**
          * mandatory for non-EEA countries
          * The BIC will continue to be mandatory for SEPA
          * payment transactions involving SCT scheme
@@ -131,6 +119,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withIssuer(String value) {
+            if (strEmpty(value)) {
+                return this;
+            }
             this.issuer = value.trim();
             return this;
         }
@@ -153,6 +144,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withTransferAmount(BigDecimal value) {
+            if (value == null) {
+                return this;
+            }
             this.transferAmount = value;
             return this;
         }
@@ -175,6 +169,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withSepaPurpose(SepaPurpose value) {
+            if (value == null) {
+                return this;
+            }
             this.sepaPurpose = value;
             return this;
         }
@@ -185,6 +182,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withIntendedUse(String value) {
+            if (value == null) {
+                return this;
+            }
             this.intendedUse = value.trim();
             return this;
         }
@@ -197,6 +197,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withScor(String value) {
+            if (value == null) {
+                return this;
+            }
             this.scor = value.trim();
             return this;
         }
@@ -207,6 +210,9 @@ public final class Epc {
          * @return Epc object
          */
         public Builder withMessage(String value) {
+            if (value == null) {
+                return this;
+            }
             this.message = value.trim();
             return this;
         }
@@ -289,6 +295,21 @@ public final class Epc {
             return characterEncoding;
         }
 
+        /**
+         * EPC069-12: field content must not contain the row separator (LF/CR) and must be
+         * representable in the character set selected via {@code withCharacterEncoding}.
+         * @param value text to check
+         * @param fieldName name of the field, used in the exception message
+         */
+        private void checkSepaText(String value, String fieldName) {
+            if (containsLineBreak(value)) {
+                throw new EpcException(fieldName + " must not contain line break(s)");
+            }
+            if (!isEncodable(value, charsetForEncoding(characterEncoding))) {
+                throw new EpcException(fieldName + " contains character(s) not encodable in the selected character set");
+            }
+        }
+
         private String checkBIC(String value) throws EpcException {
             if (strEmpty(value)) {
                 return "";
@@ -309,10 +330,7 @@ public final class Epc {
             if (value.length() > 70) {
                 throw new EpcException("issuer exceed allowed length, max. 70");
             }
-            Matcher matcher = umlauts ? SEPA_TEXT_UMLAUTS_PATTERN.matcher(value) : SEPA_TEXT_PATTERN.matcher(value);
-            if (!matcher.matches()) {
-                throw new EpcException("issuer contains invalid character(s)");
-            }
+            checkSepaText(value, "issuer");
             return value;
         }
 
@@ -359,10 +377,7 @@ public final class Epc {
             if (value.length() > 140) {
                 throw new EpcException("intended use contains to many character(s), max. 140");
             }
-            Matcher matcher = umlauts ? SEPA_TEXT_UMLAUTS_PATTERN.matcher(value) : SEPA_TEXT_PATTERN.matcher(value);
-            if (!matcher.matches()) {
-                throw new EpcException("intended use contains invalid character(s)");
-            }
+            checkSepaText(value, "intended use");
             return value;
         }
 
@@ -373,10 +388,7 @@ public final class Epc {
             if (value.length() > 70) {
                 throw new EpcException("message contains to many character(s), max. 70");
             }
-            Matcher matcher = umlauts ? SEPA_TEXT_UMLAUTS_PATTERN.matcher(value) : SEPA_TEXT_PATTERN.matcher(value);
-            if (!matcher.matches()) {
-                throw new EpcException("message contains invalid character(s)");
-            }
+            checkSepaText(value, "message");
             return value;
         }
 

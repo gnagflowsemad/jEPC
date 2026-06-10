@@ -3,6 +3,7 @@ package cc.dames.jepc;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.regex.Matcher;
@@ -21,14 +22,6 @@ public final class SepaUtils {
 
     public static final Pattern IBAN_PATTERN = Pattern.compile(IBAN_REGEX, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    private static final String SEPA_TEXT = "[a-zA-Z0-9/\\-?:().,+' ]+";
-
-    public static final Pattern SEPA_TEXT_PATTERN = Pattern.compile(SEPA_TEXT);
-
-    private static final String SEPA_TEXT_UMLAUTS = "[a-zA-Z0-9/\\-?:().,+' öäüÄÖÜß]+";
-
-    public static final Pattern SEPA_TEXT_UMLAUTS_PATTERN = Pattern.compile(SEPA_TEXT_UMLAUTS, Pattern.UNICODE_CASE | Pattern.MULTILINE);
-
     private static final String BIC_REGEX = "([a-zA-Z]{4})([a-zA-Z]{2})(([2-9a-zA-Z])([0-9a-np-zA-NP-Z]))((([0-9a-wy-zA-WY-Z])([0-9a-zA-Z]{2}))|([xX]{3})|)";
 
     public static final Pattern BIC_REGEX_PATTERN = Pattern.compile(BIC_REGEX, Pattern.UNICODE_CASE | Pattern.MULTILINE);
@@ -41,6 +34,26 @@ public final class SepaUtils {
 
     public static boolean strEmpty(final String str) {
         return !strNotEmpty(str);
+    }
+
+    /**
+     * EPC069-12: the line feed (LF) or carriage return (CR) characters are used as element
+     * separators in the QR code payload and must therefore not appear within a field's content.
+     * @param value text to check
+     * @return true if value contains a line feed or carriage return character
+     */
+    public static boolean containsLineBreak(final String value) {
+        return value.indexOf('\n') >= 0 || value.indexOf('\r') >= 0;
+    }
+
+    /**
+     * EPC069-12 section 2.1: field content must be representable in the character set chosen for the QR code.
+     * @param value text to check
+     * @param charset character set selected via {@code withCharacterEncoding}
+     * @return true if value can be encoded losslessly using charset
+     */
+    public static boolean isEncodable(final String value, final Charset charset) {
+        return charset.newEncoder().canEncode(value);
     }
 
     public static boolean exceedAmount(BigDecimal amount) {

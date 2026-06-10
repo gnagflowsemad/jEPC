@@ -6,7 +6,7 @@
 
     <groupId>cc.dames</groupId>
     <artifactId>jEPC</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 
     <name>jEPC</name>
     <description>jEPC is a Java library for generating 12 lines of text as described the content of a QR code that can be used to initiate SEPA credit transfer (SCT). It contains all the necessary information in clear text.</description>

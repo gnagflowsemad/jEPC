@@ -221,7 +221,6 @@ class EpcTest {
                 .withIBAN("DE33100205000001194700")
                 .withTransferAmount(new BigDecimal("123.45"))
                 .withIntendedUse("Spende")
-                .withUmlauts(true)
                 .withMessage("Bitte innerhalb der nächsten 14 Tage überweisen");
 
         String generated = epc.build();
@@ -245,17 +244,60 @@ class EpcTest {
     }
 
     @Test
-    void testUmlautsNegativeEpc() {
+    void testSpecialCharactersEpc() {
+        Epc.Builder epc = new Epc.Builder();
+        epc
+                .withIssuer("C&D Musterwerk IT-Beratung GmbH")
+                .withIBAN("DE33100205000001194700")
+                .withTransferAmount(new BigDecimal("123.45"))
+                .withIntendedUse("Rechnung_2024_Nr_42");
+
+        String generated = epc.build();
+
+        String expected = """
+                BCD
+                002
+                1
+                SCT
+
+                C&D Musterwerk IT-Beratung GmbH
+                DE33100205000001194700
+                EUR123.45
+
+
+                Rechnung_2024_Nr_42
+                """;
+
+        assertEquals(expected, generated);
+    }
+
+    @Test
+    void testLineBreakInMessageEpc() {
         Epc.Builder epc = new Epc.Builder();
         epc
                 .withIssuer("Wikimedia Foerdergesellschaft")
                 .withIBAN("DE33100205000001194700")
                 .withTransferAmount(new BigDecimal("123.45"))
                 .withIntendedUse("Spende")
-                .withMessage("Bitte innerhalb der nächsten 14 Tage überweisen");
+                .withMessage("Zeile1\nZeile2");
 
         EpcException thrown = assertThrows(EpcException.class, epc::build);
-        assertTrue(thrown.getMessage().contains("message contains invalid character(s)"));
+        assertTrue(thrown.getMessage().contains("message must not contain line break(s)"));
+    }
+
+    @Test
+    void testNonEncodableCharacterEpc() {
+        Epc.Builder epc = new Epc.Builder();
+        epc
+                .withIssuer("Wikimedia Foerdergesellschaft")
+                .withIBAN("DE33100205000001194700")
+                .withCharacterEncoding(2) // ISO 8859-1, does not contain the Euro sign
+                .withTransferAmount(new BigDecimal("123.45"))
+                .withIntendedUse("Spende")
+                .withMessage("Betrag: 5 €");
+
+        EpcException thrown = assertThrows(EpcException.class, epc::build);
+        assertTrue(thrown.getMessage().contains("message contains character(s) not encodable in the selected character set"));
     }
 
     @Test

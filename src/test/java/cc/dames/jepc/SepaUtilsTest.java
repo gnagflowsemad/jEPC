@@ -3,6 +3,8 @@ package cc.dames.jepc;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static cc.dames.jepc.SepaUtils.*;
 import static cc.dames.jepc.SepaUtils.validateSCOR;
@@ -12,13 +14,23 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class SepaUtilsTest {
 
     @Test
-    void sepaTextPatternTest() {
-        assertTrue(SEPA_TEXT_PATTERN.matcher("Wikimedia Foerdergesellschaft").matches());
-        assertTrue(SEPA_TEXT_PATTERN.matcher("Bitte innerhalb der naechsten 14 Tage ueberweisen").matches());
-        assertFalse(SEPA_TEXT_PATTERN.matcher("C&D Musterwerk IT-Beratung GmbH").matches());
-        assertFalse(SEPA_TEXT_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
-        assertTrue(SEPA_TEXT_UMLAUTS_PATTERN.matcher("Wikimedia Fördergesellschaft").matches());
-        assertFalse(SEPA_TEXT_UMLAUTS_PATTERN.matcher("C&D Musterwerk IT-Beratung GmbH").matches());
+    void containsLineBreakTest() {
+        assertFalse(containsLineBreak("Wikimedia Foerdergesellschaft"));
+        assertFalse(containsLineBreak("C&D Musterwerk IT-Beratung GmbH_42"));
+        assertTrue(containsLineBreak("Line1\nLine2"));
+        assertTrue(containsLineBreak("Line1\rLine2"));
+        assertTrue(containsLineBreak("Line1\r\nLine2"));
+    }
+
+    @Test
+    void isEncodableTest() {
+        assertTrue(isEncodable("Wikimedia Foerdergesellschaft", StandardCharsets.UTF_8));
+        assertTrue(isEncodable("C&D Musterwerk IT-Beratung GmbH_42", StandardCharsets.ISO_8859_1));
+        assertTrue(isEncodable("Wikimedia Fördergesellschaft", StandardCharsets.UTF_8));
+        assertTrue(isEncodable("Wikimedia Fördergesellschaft", StandardCharsets.ISO_8859_1));
+        assertFalse(isEncodable("Wikimedia Fördergesellschaft €", StandardCharsets.ISO_8859_1));
+        assertTrue(isEncodable("Wikimedia Fördergesellschaft €", StandardCharsets.UTF_8));
+        assertTrue(isEncodable("Wikimedia Fördergesellschaft €", Charset.forName("ISO-8859-15")));
     }
 
     @Test
